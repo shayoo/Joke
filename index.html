@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Joke Generator</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+      color: #fafafa;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
+    }
+    #joke {
+      margin-top: 40px;
+      font-size: 1.4em;
+      line-height: 1.6em;
+      min-height: 100px;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3399ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Joke Generator</h1>
+  <div id="joke">Click the button when ready for chaos.</div>
+  <button onclick="getJoke()">Tell me a joke</button>
+
+  <script>
+    async function getJoke() {
+      try {
+        const categories = ["Dark", "Misc", "Programming", "Spooky", "Pun"];
+        const category = categories[Math.floor(Math.random() * categories.length)];
+        const url = `https://v2.jokeapi.dev/joke/${category}?blacklistFlags=sexist,racist,explicit`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+        let jokeText = "";
+
+        if (data.type === "single") {
+          jokeText = data.joke;
+        } else if (data.type === "twopart") {
+          jokeText = `${data.setup}<br><br><strong>${data.delivery}</strong>`;
+        } else {
+          jokeText = "The universe ran out of punchlines.";
+        }
+
+        document.getElementById("joke").innerHTML = jokeText;
+      } catch (err) {
+        document.getElementById("joke").innerText = "Whoops, the joke gremlins are sleeping...";
+        console.error("API failed:", err);
+      }
+    }
+  </script>
+</body>
+</html>
